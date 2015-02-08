@@ -42,4 +42,5 @@ public class SignalDataAdapter extends ArrayAdapter<SignalTaskData> {
 
         }
     }
+
 }

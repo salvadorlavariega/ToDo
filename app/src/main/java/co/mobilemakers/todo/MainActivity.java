@@ -1,29 +1,30 @@
 package co.mobilemakers.todo;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+ import android.support.v7.app.ActionBarActivity;
+
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 
 
-public class
-        MainActivity extends ActionBarActivity {
 
+public class   MainActivity extends ActionBarActivity {
+   public final static String TAG_LIST="listTask";
+   public final static String LOG_TAG=MainActivity.class.getSimpleName();
+    ListTasksFragment listTasksFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, new ListTasksFragment())
-                    .commit();
-        }
+
+            listTasksFragment = new ListTasksFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, listTasksFragment)
+                .commit();
+
     }
 
 
@@ -49,8 +50,5 @@ public class
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
 
 }

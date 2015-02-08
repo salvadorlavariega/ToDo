@@ -13,5 +13,6 @@
     <string name="edit_text_new_task" />
     <string name="edit_text_new_task_hint">New task here</string>
     <string name="button_add_task">Add Task</string>
+    <string name="app_createTask">Create Task</string>
 
 </resources>

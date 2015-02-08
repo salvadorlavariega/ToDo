@@ -1,8 +1,10 @@
 package co.mobilemakers.todo;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -29,7 +31,8 @@ public class ListTasksFragment extends ListFragment implements SwipeRefreshLayou
 
     private SignalDataAdapter adapter;
     SwipeRefreshLayout swipeRefreshLayout;
-
+     Parcelable[] entriesParcelable =  new Parcelable[14];
+    List<SignalTaskData>entries;
 
     public ListTasksFragment() {
         // Required empty public constructor
@@ -45,9 +48,8 @@ public class ListTasksFragment extends ListFragment implements SwipeRefreshLayou
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        if(getArguments()!=null && getArguments().containsKey(CreateTaskFragment.KEY_TASK)){
-           // addSignalData(getArguments().getString(CreateTaskFragment.KEY_TASK));
-        }
+
+
         swipeRefreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.swipe_container);
         swipeRefreshLayout.setOnRefreshListener(this);
         return rootView;
@@ -57,6 +59,8 @@ public class ListTasksFragment extends ListFragment implements SwipeRefreshLayou
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         prepareListView();
+
+
     }
 
     @Override
@@ -71,10 +75,12 @@ public class ListTasksFragment extends ListFragment implements SwipeRefreshLayou
         Boolean handled = false;
         switch (menuId){
             case R.id.action_add:
-              getActivity().getSupportFragmentManager().beginTransaction().replace(
-                      R.id.container, new CreateTaskFragment()
-              ).commit();
+
+                Intent intent = new Intent(getActivity(), CreateTaskActivity.class);
+                startActivityForResult(intent,0);
+
                 handled=true;
+
                 break;
         }
         if(!handled){
@@ -85,10 +91,22 @@ public class ListTasksFragment extends ListFragment implements SwipeRefreshLayou
     }
 
     private void addSignalData(String taskName) {
+
         Log.i("señales","agregando texto="+taskName);
-        SignalTaskData signalData = new SignalTaskData();
-        signalData.setTarkName(taskName);
-        adapter.add(signalData);
+        try {
+            SignalTaskData  signalData = new SignalTaskData();
+            signalData.setTarkName(taskName);
+for(int i=0;i<entriesParcelable.length; i++){
+    if(entriesParcelable[i]==null){
+        entriesParcelable[i]=signalData;
+        break;
+    }
+}
+
+            adapter.add(signalData);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -96,6 +114,7 @@ public class ListTasksFragment extends ListFragment implements SwipeRefreshLayou
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
          addSignalData("Señal refresing");
+
         swipeRefreshLayout.setRefreshing(false);
 
     }
@@ -103,8 +122,8 @@ public class ListTasksFragment extends ListFragment implements SwipeRefreshLayou
 
     private void prepareListView() {
 
-
-        List<SignalTaskData> entries = new ArrayList<>();
+        if(entries==null )
+            entries= new ArrayList<>();
         adapter = new SignalDataAdapter(getActivity(),  entries);
         setListAdapter(adapter);
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -117,6 +136,13 @@ public class ListTasksFragment extends ListFragment implements SwipeRefreshLayou
         });
     }
 
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        addSignalData(data.getStringExtra(CreateTaskFragment.KEY_TASK));
+    }
 
 
 }
